@@ -184,18 +184,48 @@ class Canvas extends React.Component{
   }
 
   setTransformer = (id) => {
-    this.setState({selectedId:id});
     const nodes = this.state.nodes;
     for(let i = 0; i < nodes.length; i++){
       if(nodes[i].id===id){
-        this.setState({transformerData: nodes[i]});
+        console.log(id, nodes[i], nodes)
+
+        this.setState({selectedId:id, transformerData: nodes[i]});
         return;
       }
     }
   }
 
   moveElement = (id, data) => {
-    console.log('moving')
+    // console.log('moving')
+    console.log(id, data)
+
+    const nodes = this.state.nodes;
+    for(let i = 0; i < nodes.length; i++){
+      if(nodes[i].id===id){
+        nodes[i].absoluteBounds.x = data.x
+        nodes[i].absoluteBounds.y = data.y
+        this.setState({nodes: nodes});
+        return;
+      }
+    }
+  }
+
+  resizeElement = (id, data) => {
+    // console.log('moving')
+    console.log(id, data)
+
+    const nodes = this.state.nodes;
+    for(let i = 0; i < nodes.length; i++){
+      if(nodes[i].id===id){
+        // nodes[i].absoluteBounds.x = data.x
+        // nodes[i].absoluteBounds.y = data.y
+        nodes[i].absoluteBounds.width = data.width
+        nodes[i].absoluteBounds.height = data.height
+
+        this.setState({nodes: nodes});
+        return;
+      }
+    }
   }
 
   onKeyDown = (e) => {
@@ -210,7 +240,6 @@ class Canvas extends React.Component{
       <div>
         <Toolbar setPointerType={this.setPointerType}></Toolbar>
         <svg style={{minHeight:'100vh', width:'100%'}} onMouseDown={this.onMouseDown} onMouseMove={this.onMouseMove} onMouseUp={this.onMouseUp} id="svg-container">
-          <Transformer data={this.state.transformerData} id={this.state.selectedId} moveElement={this.moveElement}></Transformer>
           {/* render all shapes */}
           {
             this.state.nodes.filter(x=>x.type==='SHAPE').map((shape, index) => (
@@ -236,6 +265,14 @@ class Canvas extends React.Component{
             ))
           }
           {/* <use xlinkHref={`#group-${this.state.selectedId}`} /> */}
+          <Transformer 
+              data={this.state.transformerData} 
+              id={this.state.selectedId} 
+              moveElement={this.moveElement} 
+              resizeElement={this.resizeElement}>
+
+              </Transformer>
+
         </svg>
       </div>
     )
