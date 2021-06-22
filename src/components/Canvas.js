@@ -205,7 +205,7 @@ class Canvas extends React.Component{
           {/* render all text */}
           {
             this.state.nodes.filter(x=>x.type==='TEXT').map((text, index) => (
-              <Text data={text} key={index}></Text>
+              <Text data={text} key={index} onClick={this.setTransformer}></Text>
             ))
           }
           {/* render all markups */}
@@ -214,7 +214,7 @@ class Canvas extends React.Component{
               <Markup data={markup} key={index} onClick={this.setTransformer}></Markup>
             ))
           }
-          <use xlinkHref={`#group-${this.state.selectedId}`} />
+          {/* <use xlinkHref={`#group-${this.state.selectedId}`} /> */}
         </svg>
       </div>
     )
