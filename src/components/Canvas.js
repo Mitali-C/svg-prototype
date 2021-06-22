@@ -8,6 +8,7 @@ import {images} from '../data/randomImages';
 import Toolbar from './Toolbar';
 import Transformer from './Transformer';
 import { v4 as uuidv4 } from 'uuid';
+import svgPanZoom from 'svg-pan-zoom';
 
 class Canvas extends React.Component{
   state = {
@@ -24,6 +25,19 @@ class Canvas extends React.Component{
   componentDidMount(){
     //Get all the shapes
     this.setState({nodes:data.children});
+    window.addEventListener('keydown', this.onKeyDown);
+    window.addEventListener('keyup', () => {
+      var panZoom = svgPanZoom('#svg-container');
+      panZoom.disablePan();
+    });
+
+    document.getElementById('svg-container').addEventListener('load', function(){
+    var panZoom = svgPanZoom('#svg-container');
+
+    panZoom.disablePan();
+      
+    panZoom.enableZoom();
+    })
   }
 
   getRandomImageSource = () => {
@@ -184,11 +198,18 @@ class Canvas extends React.Component{
     console.log('moving')
   }
 
+  onKeyDown = (e) => {
+    if(e.keyCode===16){
+      var panZoom = svgPanZoom('#svg-container');
+      panZoom.enablePan();
+    }
+  }
+
   render(){
     return(
       <div>
         <Toolbar setPointerType={this.setPointerType}></Toolbar>
-        <svg style={{minHeight:'100vh', width:'100%'}} onMouseDown={this.onMouseDown} onMouseMove={this.onMouseMove} onMouseUp={this.onMouseUp}>
+        <svg style={{minHeight:'100vh', width:'100%'}} onMouseDown={this.onMouseDown} onMouseMove={this.onMouseMove} onMouseUp={this.onMouseUp} id="svg-container">
           <Transformer data={this.state.transformerData} id={this.state.selectedId} moveElement={this.moveElement}></Transformer>
           {/* render all shapes */}
           {
