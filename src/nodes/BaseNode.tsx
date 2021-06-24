@@ -2,13 +2,15 @@ import React from 'react';
 
 interface NodeState {
   data:any,
-  onClick:any
+  onClick:any,
+  increaseImageLoadCount: any
 
 }
 
 interface NodeProps {
   data:any,
-  onClick:any
+  onClick:any,
+  increaseImageLoadCount:any
 }
 
 class BaseNode extends React.Component<NodeState, NodeProps>{

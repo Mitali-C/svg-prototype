@@ -15,7 +15,10 @@ class Canvas extends React.Component{
     nodes:[],
     pointer_type:'SELECT',
     transformerData:null,
-    selectedId:null
+    selectedId:null,
+    count: 0,
+    startTime:new Date(),
+    endTime:new Date(),
   }
 
   setPointerType = (type) => {
@@ -24,20 +27,78 @@ class Canvas extends React.Component{
 
   componentDidMount(){
     //Get all the shapes
-    this.setState({nodes:data.children});
-    window.addEventListener('keydown', this.onKeyDown);
-    window.addEventListener('keyup', () => {
-      var panZoom = svgPanZoom('#svg-container');
-      panZoom.disablePan();
-    });
+    // this.setState({nodes:data.children});
+    // window.addEventListener('keydown', this.onKeyDown);
+    // window.addEventListener('keyup', () => {
+    //   var panZoom = svgPanZoom('#svg-container');
+    //   panZoom.disablePan();
+    // });
 
-    document.getElementById('svg-container').addEventListener('load', function(){
-    var panZoom = svgPanZoom('#svg-container');
+    // document.getElementById('svg-container').addEventListener('load', function(){
+    // var panZoom = svgPanZoom('#svg-container');
 
-    panZoom.disablePan();
+    // panZoom.disablePan();
       
-    panZoom.enableZoom();
-    })
+    // panZoom.enableZoom();
+    // })
+
+    // rendering 1000 images
+    this.setState({startTime: new Date()})
+    for(let i=0;i<500; i++){
+      let allNodes = this.state.nodes;
+      let url = this.getRandomImageSource();
+        this.getMeta(
+          url,
+          (width, height) => { 
+            const tempImageData = {
+              id:uuidv4(),
+              "type":"IMAGE",
+              "absoluteBounds":{
+                "x":this.getRandomArbitrary(0, window.innerWidth),
+                "y":this.getRandomArbitrary(0, window.innerHeight),
+                width:width, 
+                height:height
+              },
+              "image":{
+                "src":url
+              }
+            };
+            allNodes.push(tempImageData);
+            this.setState({"nodes": allNodes});
+          }
+        )
+      }
+  }
+
+  getRandomArbitrary = (min, max) => {
+    return Math.random() * (max - min) + min;
+  }
+
+  increaseImageLoadCount = () => {
+    this.setState({count: this.state.count+1, endTime: new Date()})
+  } 
+
+  getTimeDifference = () => {
+    if(this.state.startTime && this.state.endTime){
+      var delta = Math.abs(this.state.startTime.valueOf() - this.state.endTime.valueOf()) / 1000;
+
+      // calculate (and subtract) whole days
+      var days = Math.floor(delta / 86400);
+      delta -= days * 86400;
+
+      // calculate (and subtract) whole hours
+      var hours = Math.floor(delta / 3600) % 24;
+      delta -= hours * 3600;
+
+      // calculate (and subtract) whole minutes
+      var minutes = Math.floor(delta / 60) % 60;
+      delta -= minutes * 60;
+
+      // what's left is seconds
+      var seconds = delta % 60;  // in theory the modulus is not required
+
+      return `${minutes} minutes ${seconds} seconds`
+    }
   }
 
   getRandomImageSource = () => {
@@ -238,7 +299,13 @@ class Canvas extends React.Component{
   render(){
     return(
       <div>
-        <Toolbar setPointerType={this.setPointerType}></Toolbar>
+      <div style={{display:'flex', flexWrap:'wrap'}}>
+        <p style={{marginRight:'2rem'}}>
+          <span style={{fontWeight:'bold', textDecoration:'underline'}}>Time</span>: {this.getTimeDifference()} 
+        </p>
+        <p><span style={{fontWeight:'bold', textDecoration:'underline'}}>Count</span>: {this.state.count}</p>
+      </div>
+        {/* <Toolbar setPointerType={this.setPointerType}></Toolbar> */}
         <svg style={{minHeight:'100vh', width:'100%'}} onMouseDown={this.onMouseDown} onMouseMove={this.onMouseMove} onMouseUp={this.onMouseUp} id="svg-container">
           {/* render all shapes */}
           {
@@ -249,7 +316,7 @@ class Canvas extends React.Component{
           {/* render all images */}
           {
             this.state.nodes.filter(x=>x.type==='IMAGE').map((image, index) => (
-              <ImageComponent data={image} key={index} onClick={this.setTransformer}></ImageComponent>
+              <ImageComponent data={image} key={index} onClick={this.setTransformer} increaseImageLoadCount={this.increaseImageLoadCount}></ImageComponent>
             ))
           }
           {/* render all text */}

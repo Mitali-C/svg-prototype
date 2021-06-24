@@ -15,7 +15,7 @@ class Image extends BaseNode{
   render(){
     return(
       <>
-      <defs>
+      {/* <defs>
         <pattern  
                   id={`img-pattern-${this.data.id}`} 
                   x="0" 
@@ -25,15 +25,18 @@ class Image extends BaseNode{
                   viewBox={`0 0 ${this.data.absoluteBounds?.width} ${this.data.absoluteBounds?.height}`} 
                   >
           <image width={this.data.absoluteBounds?.width} height={this.data.absoluteBounds?.height}
-                  preserveAspectRatio={"none"}
+                  preserveAspectRatio={"none"} onLoad={this.props.increaseImageLoadCount}
                 href={this.data.image?.src}/>
         </pattern>
-      </defs>
-      <rect 
+      </defs> */}
+          <image width={this.data.absoluteBounds?.width} height={this.data.absoluteBounds?.height} x={this.data.absoluteBounds?.x} y={this.data.absoluteBounds?.y} 
+                  preserveAspectRatio={"none"} onLoad={this.props.increaseImageLoadCount}
+                href={this.data.image?.src}/>
+      {/* <rect 
         id={this.data.id}
         className={`drag-svg-${this.data.id}`} 
         x={this.data.absoluteBounds?.x} y={this.data.absoluteBounds?.y} width={this.data.absoluteBounds?.width} height={this.data.absoluteBounds?.height} 
-        fill={`url(#img-pattern-${this.data.id})`}  onClick={this.onSelect}></rect>
+        fill={`url(#img-pattern-${this.data.id})`}  onClick={this.onSelect}></rect> */}
       </>
     )
   }
